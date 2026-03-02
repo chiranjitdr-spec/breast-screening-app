@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎗️ স্তন ক্যানসার স্ক্রিনিং QR</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --rose:#c2185b; --rose-dark:#880e4f; --rose-light:#f8bbd0;
+  --rose-pale:#fce4ec; --cream:#fffbf7; --text:#2d1b20;
+  --text-soft:#6b4455; --green:#2e7d32; --gold:#b8860b;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--cream);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:1.5rem;
+  background-image:
+    radial-gradient(ellipse at 15% 15%, rgba(194,24,91,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 85%, rgba(194,24,91,0.05) 0%, transparent 55%);
+}
+
+/* CARD */
+.card{
+  background:white;
+  border-radius:24px;
+  box-shadow:0 8px 40px rgba(136,14,79,0.13);
+  overflow:hidden;
+  max-width:420px;
+  width:100%;
+  border:1px solid rgba(194,24,91,0.1);
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,var(--rose-dark) 0%,var(--rose) 55%,#e91e8c 100%);
+  padding:2rem 1.5rem 1.5rem;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.header::before{
+  content:'';
+  position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='25' cy='25' r='18' fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='1'/%3E%3C/svg%3E") repeat;
+}
+.ribbon{
+  font-size:3rem;
+  display:inline-block;
+  animation:pulse 2s ease-in-out infinite;
+  position:relative;
+}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.header h1{
+  font-family:'Noto Serif Bengali',serif;
+  color:white;
+  font-size:1.45rem;
+  font-weight:700;
+  line-height:1.3;
+  margin-top:0.5rem;
+  text-shadow:0 2px 8px rgba(0,0,0,0.25);
+  position:relative;
+}
+.header h1 em{
+  font-family:'Playfair Display',serif;
+  font-style:italic;
+  font-size:0.75em;
+  display:block;
+  opacity:0.9;
+  margin-top:0.2rem;
+}
+.header p{
+  color:rgba(255,255,255,0.82);
+  font-size:0.8rem;
+  margin-top:0.4rem;
+  position:relative;
+}
+
+/* BODY */
+.body{padding:1.75rem 1.5rem;}
+
+/* QR BOX */
+.qr-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-bottom:1.5rem;
+}
+.qr-frame{
+  background:white;
+  border-radius:16px;
+  padding:14px;
+  border:3px solid var(--rose-light);
+  box-shadow:0 4px 20px rgba(194,24,91,0.15);
+  position:relative;
+  display:inline-block;
+}
+/* Corner accents */
+.qr-frame::before,.qr-frame::after,
+.qr-frame .corner-bl,.qr-frame .corner-br{
+  content:'';
+  position:absolute;
+  width:18px;height:18px;
+  border-color:var(--rose);
+  border-style:solid;
+}
+.qr-frame::before{top:-3px;left:-3px;border-width:3px 0 0 3px;border-radius:4px 0 0 0;}
+.qr-frame::after{top:-3px;right:-3px;border-width:3px 3px 0 0;border-radius:0 4px 0 0;}
+.qr-frame .corner-bl{bottom:-3px;left:-3px;border-width:0 0 3px 3px;border-radius:0 0 0 4px;}
+.qr-frame .corner-br{bottom:-3px;right:-3px;border-width:0 3px 3px 0;border-radius:0 0 4px 0;}
+
+.qr-scan-hint{
+  margin-top:1rem;
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  font-size:0.82rem;
+  color:var(--text-soft);
+  font-family:'Noto Serif Bengali',serif;
+}
+.scan-pulse{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--rose);
+  animation:blink 1.4s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
+
+/* URL BOX */
+.url-box{
+  background:var(--rose-pale);
+  border-radius:10px;
+  padding:0.75rem 1rem;
+  margin-bottom:1.25rem;
+  font-size:0.75rem;
+  color:var(--rose-dark);
+  word-break:break-all;
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  border:1px solid var(--rose-light);
+}
+.url-box .icon{font-size:1rem;flex-shrink:0;}
+.url-text{flex:1;font-family:monospace;font-size:0.7rem;}
+.copy-btn{
+  background:var(--rose);
+  color:white;
+  border:none;
+  border-radius:6px;
+  padding:0.25rem 0.6rem;
+  font-size:0.72rem;
+  cursor:pointer;
+  flex-shrink:0;
+  transition:all 0.2s;
+  font-family:'DM Sans',sans-serif;
+}
+.copy-btn:hover{background:var(--rose-dark);}
+
+/* HOW-TO */
+.steps{
+  background:#f8f9fa;
+  border-radius:12px;
+  padding:1rem;
+  margin-bottom:1.25rem;
+}
+.steps h3{
+  font-family:'Noto Serif Bengali',serif;
+  font-size:0.88rem;
+  font-weight:700;
+  color:var(--rose-dark);
+  margin-bottom:0.7rem;
+}
+.step-row{
+  display:flex;
+  align-items:flex-start;
+  gap:0.65rem;
+  margin-bottom:0.6rem;
+}
+.step-row:last-child{margin-bottom:0;}
+.step-num{
+  background:var(--rose);
+  color:white;
+  width:22px;height:22px;min-width:22px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.72rem;font-weight:700;
+}
+.step-txt{font-size:0.8rem;line-height:1.45;}
+.step-txt .bn{font-family:'Noto Serif Bengali',serif;display:block;}
+.step-txt .en{color:var(--text-soft);font-size:0.72rem;font-style:italic;}
+
+/* OPEN BTN */
+.open-btn{
+  display:block;
+  width:100%;
+  padding:0.9rem;
+  background:linear-gradient(135deg,var(--rose-dark),var(--rose));
+  color:white;
+  border:none;
+  border-radius:12px;
+  font-family:'Noto Serif Bengali',serif;
+  font-size:1rem;
+  font-weight:700;
+  cursor:pointer;
+  text-align:center;
+  text-decoration:none;
+  box-shadow:0 4px 16px rgba(194,24,91,0.35);
+  transition:all 0.3s;
+  margin-bottom:0.75rem;
+}
+.open-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(194,24,91,0.45);}
+
+.admin-link{
+  display:block;
+  text-align:center;
+  font-size:0.78rem;
+  color:var(--text-soft);
+  text-decoration:none;
+  padding:0.4rem;
+  transition:color 0.2s;
+}
+.admin-link:hover{color:var(--rose);}
+
+/* STATS ROW */
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:0.6rem;
+  margin-bottom:1.25rem;
+}
+.stat{
+  background:var(--rose-pale);
+  border-radius:10px;
+  padding:0.65rem 0.5rem;
+  text-align:center;
+  border:1px solid var(--rose-light);
+}
+.stat-n{
+  font-family:'Playfair Display',serif;
+  font-size:1.2rem;
+  font-weight:700;
+  color:var(--rose-dark);
+  display:block;
+}
+.stat-l{
+  font-size:0.65rem;
+  color:var(--text-soft);
+  font-family:'Noto Serif Bengali',serif;
+  line-height:1.3;
+}
+
+/* DISCLAIMER */
+.disclaimer{
+  background:#fff8e1;
+  border-left:3px solid var(--gold);
+  border-radius:6px;
+  padding:0.65rem 0.85rem;
+  font-size:0.72rem;
+  color:#5f4400;
+  line-height:1.5;
+  margin-top:0.75rem;
+}
+
+/* PRINT STYLES */
+@media print{
+  body{background:white;padding:0;}
+  .card{box-shadow:none;border:none;max-width:100%;}
+  .open-btn,.admin-link,.copy-btn,.url-box{display:none;}
+  .body{padding:1rem;}
+}
+
+/* DOWNLOAD SECTION */
+.dl-row{display:flex;gap:0.5rem;margin-top:0.75rem;}
+.dl-btn{
+  flex:1;
+  padding:0.6rem;
+  border:none;
+  border-radius:8px;
+  font-size:0.78rem;
+  font-family:'DM Sans',sans-serif;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.dl-btn.print{background:#f3e5f5;color:#6a1b9a;}
+.dl-btn.print:hover{background:#ce93d8;color:white;}
+.dl-btn.img{background:#e3f2fd;color:var(--blue,#1565c0);}
+.dl-btn.img:hover{background:#1565c0;color:white;}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(60px);
+  background:#333;color:white;
+  padding:0.6rem 1.2rem;
+  border-radius:8px;font-size:0.82rem;
+  opacity:0;transition:all 0.3s;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="ribbon">🎗️</div>
+    <h1>
+      স্তন ক্যানসার স্ক্রিনিং
+      <em>Breast Cancer Screening</em>
+    </h1>
+    <p>AI-powered · বিনামূল্যে · Bilingual Bengali & English</p>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat"><span class="stat-n">বিনামূল্যে</span><span class="stat-l">Free<br>Screening</span></div>
+      <div class="stat"><span class="stat-n">AI</span><span class="stat-l">Smart<br>Analysis</span></div>
+      <div class="stat"><span class="stat-n">PDF</span><span class="stat-l">Report<br>Download</span></div>
+    </div>
+
+    <!-- QR CODE -->
+    <div class="qr-wrap">
+      <div class="qr-frame">
+        <div class="corner-bl"></div>
+        <div class="corner-br"></div>
+        <div id="qrcode"></div>
+      </div>
+      <div class="qr-scan-hint">
+        <span class="scan-pulse"></span>
+        <span>ক্যামেরা দিয়ে স্ক্যান করুন | Scan with your camera</span>
+      </div>
+    </div>
+
+    <!-- URL BOX -->
+    <div class="url-box">
+      <span class="icon">🔗</span>
+      <span class="url-text" id="appUrlDisplay">—</span>
+      <button class="copy-btn" onclick="copyURL()">Copy</button>
+    </div>
+
+    <!-- HOW TO USE -->
+    <div class="steps">
+      <h3>📱 কীভাবে ব্যবহার করবেন | How to use</h3>
+      <div class="step-row">
+        <div class="step-num">১</div>
+        <div class="step-txt">
+          <span class="bn">ফোনের ক্যামেরা দিয়ে QR কোড স্ক্যান করুন</span>
+          <span class="en">Scan the QR code with your phone camera</span>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">২</div>
+        <div class="step-txt">
+          <span class="bn">ফর্মটি পূরণ করুন — বাংলা ও ইংরেজিতে</span>
+          <span class="en">Fill in the form — available in Bengali & English</span>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">৩</div>
+        <div class="step-txt">
+          <span class="bn">AI আপনার ঝুঁকি বিশ্লেষণ করবে</span>
+          <span class="en">AI will analyze your risk in seconds</span>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">৪</div>
+        <div class="step-txt">
+          <span class="bn">PDF রিপোর্ট ডাউনলোড করুন ও চিকিৎসককে দেখান</span>
+          <span class="en">Download your PDF report & share with your doctor</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPEN BUTTON -->
+    <a class="open-btn" id="openAppBtn" href="#" target="_blank">
+      🩺 স্ক্রিনিং শুরু করুন | Start Screening
+    </a>
+
+    <!-- DOWNLOAD / PRINT -->
+    <div class="dl-row">
+      <button class="dl-btn print" onclick="window.print()">🖨️ Print QR</button>
+      <button class="dl-btn img" onclick="downloadQRImage()">⬇️ Save QR Image</button>
+    </div>
+
+    <a class="admin-link" id="adminLink" href="admin-dashboard.html" target="_blank">
+      🔐 Admin Dashboard →
+    </a>
+
+    <div class="disclaimer">
+      ⚠️ <strong>বিজ্ঞপ্তি:</strong> এই স্ক্রিনিং টুল শুধুমাত্র শিক্ষামূলক। এটি চিকিৎসা পরামর্শ বা রোগ নির্ণয় নয়।
+      <em>For educational purposes only. Not a medical diagnosis.</em>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── Determine the app URL ───────────────────────────────────────────────────
+// When both files are in the same folder, the screening app is at:
+const APP_FILENAME = 'breast-screening-app.html';
+
+function getAppURL() {
+  const base = window.location.href
+    .split('?')[0]                    // strip any query params
+    .replace(/\/[^/]*$/, '/');        // keep directory path
+  return base + APP_FILENAME;
+}
+
+const APP_URL = getAppURL();
+
+// ─── Fill UI ─────────────────────────────────────────────────────────────────
+document.getElementById('appUrlDisplay').textContent = APP_URL;
+document.getElementById('openAppBtn').href = APP_URL;
+
+// ─── Generate QR ─────────────────────────────────────────────────────────────
+new QRCode(document.getElementById('qrcode'), {
+  text: APP_URL,
+  width: 200,
+  height: 200,
+  colorDark: '#880e4f',
+  colorLight: '#ffffff',
+  correctLevel: QRCode.CorrectLevel.H   // High error correction = scannable even if partly covered
+});
+
+// ─── Copy URL ────────────────────────────────────────────────────────────────
+function copyURL() {
+  navigator.clipboard.writeText(APP_URL)
+    .then(() => showToast('✅ লিংক কপি হয়েছে | Link copied!'))
+    .catch(() => {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = APP_URL;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('✅ Link copied!');
+    });
+}
+
+// ─── Download QR as image ────────────────────────────────────────────────────
+function downloadQRImage() {
+  const canvas = document.querySelector('#qrcode canvas');
+  if (!canvas) { showToast('⚠️ QR not ready yet'); return; }
+
+  // Create a new canvas with padding + branding
+  const pad = 28;
+  const out = document.createElement('canvas');
+  out.width  = canvas.width  + pad * 2;
+  out.height = canvas.height + pad * 2 + 52;  // extra for text
+  const ctx = out.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, out.width, out.height);
+
+  // Top banner
+  ctx.fillStyle = '#880e4f';
+  ctx.fillRect(0, 0, out.width, 40);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('🎗️ স্তন ক্যানসার স্ক্রিনিং | Breast Cancer Screening', out.width/2, 26);
+
+  // QR
+  ctx.drawImage(canvas, pad, 44);
+
+  // Bottom text
+  ctx.fillStyle = '#6b4455';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('📱 ক্যামেরা দিয়ে স্ক্যান করুন | Scan to start screening', out.width/2, 44 + canvas.height + 20);
+  ctx.fillStyle = '#bbb';
+  ctx.font = '9px sans-serif';
+  ctx.fillText(APP_URL, out.width/2, 44 + canvas.height + 36);
+
+  // Download
+  const a = document.createElement('a');
+  a.download = 'BreastCancer_Screening_QR.png';
+  a.href = out.toDataURL('image/png');
+  a.click();
+  showToast('✅ QR image saved!');
+}
+
+// ─── Toast ───────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─── Auto-redirect on mobile if opened via QR scan ──────────────────────────
+// If the URL contains ?scan=1 the QR itself can embed that flag.
+// Or simply detect mobile & offer immediate redirect.
+if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+  // Show a prominent banner for mobile users
+  const btn = document.getElementById('openAppBtn');
+  btn.textContent = '👉 স্ক্রিনিং এখনই শুরু করুন | Open Now';
+  btn.style.animation = 'pulse 1.5s ease-in-out infinite';
+}
+</script>
+</body>
+</html>

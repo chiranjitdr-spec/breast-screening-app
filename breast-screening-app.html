@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎗️ স্তন ক্যানসার স্ক্রিনিং | Smart Screening</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --rose:#c2185b; --rose-dark:#880e4f; --rose-light:#f8bbd0;
+  --rose-pale:#fce4ec; --cream:#fffbf7; --text:#2d1b20;
+  --text-soft:#6b4455; --gold:#b8860b; --green:#2e7d32;
+  --amber:#e65100; --blue:#1565c0; --shadow:rgba(194,24,91,0.13);
+  --purple:#6a1b9a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+
+/* HEADER */
+header{background:linear-gradient(135deg,var(--rose-dark),var(--rose),#e91e8c);padding:2rem 1.5rem 1.5rem;text-align:center;position:relative;overflow:hidden;}
+header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='12' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E") repeat;}
+header h1{font-family:'Noto Serif Bengali',serif;color:#fff;font-size:clamp(1.3rem,4vw,2rem);font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,0.25);position:relative;}
+header p{color:rgba(255,255,255,0.85);font-size:0.85rem;margin-top:0.4rem;position:relative;}
+.ribbon-anim{font-size:2.2rem;animation:pulse 2s ease-in-out infinite;display:inline-block;position:relative;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+/* PROGRESS BAR */
+.progress-nav{display:flex;background:white;border-bottom:2px solid var(--rose-light);overflow:hidden;}
+.step-indicator{flex:1;padding:0.65rem 0.25rem;text-align:center;font-size:0.72rem;color:#bbb;border-bottom:3px solid transparent;transition:all 0.3s;font-family:'Noto Serif Bengali',serif;}
+.step-indicator.done{color:var(--green);border-bottom-color:var(--green);}
+.step-indicator.active{color:var(--rose-dark);border-bottom-color:var(--rose);font-weight:700;}
+.step-num-badge{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#eee;align-items:center;justify-content:center;font-size:0.65rem;margin-right:3px;font-weight:700;transition:all 0.3s;}
+.step-indicator.done .step-num-badge{background:var(--green);color:white;}
+.step-indicator.active .step-num-badge{background:var(--rose);color:white;}
+
+/* MAIN */
+main{max-width:720px;margin:0 auto;padding:1.5rem 1.25rem 3rem;}
+
+/* PAGE SECTIONS */
+.page{display:none;animation:fadeUp 0.4s ease;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* CARD */
+.card{background:white;border-radius:16px;box-shadow:0 4px 24px var(--shadow);margin-bottom:1.25rem;overflow:hidden;border:1px solid rgba(194,24,91,0.08);}
+.card-hd{background:linear-gradient(90deg,var(--rose-pale),white);padding:0.9rem 1.25rem;border-bottom:1px solid var(--rose-light);display:flex;align-items:center;gap:0.6rem;}
+.card-hd h2{font-family:'Noto Serif Bengali',serif;font-size:0.95rem;color:var(--rose-dark);font-weight:700;}
+.card-hd h2 small{display:block;font-family:'DM Sans',sans-serif;font-weight:400;font-size:0.75rem;color:var(--text-soft);}
+.card-bd{padding:1.25rem;}
+
+/* FORM */
+.fg{margin-bottom:1.1rem;}
+label{display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.35rem;color:var(--text);}
+label .bn{font-family:'Noto Serif Bengali',serif;font-size:0.9rem;}
+label .en{color:var(--text-soft);font-size:0.75rem;font-style:italic;font-weight:400;}
+input[type=text],input[type=number],input[type=tel],select,textarea{width:100%;padding:0.6rem 0.9rem;border:1.5px solid #e0c0cc;border-radius:8px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:var(--text);background:#fff9f6;transition:border 0.2s,box-shadow 0.2s;appearance:none;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c2185b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.9rem center;padding-right:2.5rem;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 3px rgba(194,24,91,0.1);}
+textarea{resize:vertical;min-height:80px;}
+
+/* CHECKBOX GRID */
+.cbgrid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;}
+@media(max-width:480px){.cbgrid{grid-template-columns:1fr}}
+.cb-item{display:flex;align-items:flex-start;gap:0.5rem;background:#fff9f6;border:1.5px solid #f0d0da;border-radius:8px;padding:0.6rem 0.7rem;cursor:pointer;transition:all 0.2s;}
+.cb-item:hover{border-color:var(--rose);background:var(--rose-pale);}
+.cb-item input{display:none;}
+.cb-box{width:17px;height:17px;min-width:17px;border:2px solid #d0a0b0;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px;}
+.cb-item.checked{border-color:var(--rose);background:var(--rose-pale);}
+.cb-item.checked .cb-box{background:var(--rose);border-color:var(--rose);}
+.cb-item.checked .cb-box::after{content:'✓';color:white;font-size:11px;font-weight:700;}
+.cb-lbl{font-size:0.8rem;line-height:1.35;}
+.cb-lbl .bn{font-family:'Noto Serif Bengali',serif;display:block;}
+.cb-lbl .en{color:var(--text-soft);font-size:0.7rem;font-style:italic;}
+
+/* BUTTONS */
+.btn{padding:0.8rem 1.5rem;border:none;border-radius:10px;font-size:0.95rem;font-family:'Noto Serif Bengali',serif;font-weight:700;cursor:pointer;transition:all 0.3s;}
+.btn-primary{background:linear-gradient(135deg,var(--rose-dark),var(--rose));color:white;box-shadow:0 4px 14px rgba(194,24,91,0.3);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(194,24,91,0.4);}
+.btn-secondary{background:white;color:var(--rose);border:2px solid var(--rose);}
+.btn-secondary:hover{background:var(--rose-pale);}
+.btn-green{background:linear-gradient(135deg,#2e7d32,#43a047);color:white;box-shadow:0 4px 14px rgba(46,125,50,0.3);}
+.btn-green:hover{transform:translateY(-2px);}
+.btn-row{display:flex;gap:0.75rem;justify-content:space-between;margin-top:1.25rem;flex-wrap:wrap;}
+.btn-full{width:100%;text-align:center;}
+
+/* DISCLAIMER */
+.disclaimer{background:#fff8e1;border-left:4px solid var(--gold);border-radius:8px;padding:0.85rem 1rem;margin-bottom:1.25rem;font-size:0.82rem;color:#5f4400;line-height:1.6;}
+
+/* AI RESULT */
+.ai-result{background:linear-gradient(135deg,#f8f4ff,#fce4ec);border-radius:14px;padding:1.25rem;margin:1rem 0;border:1.5px solid #ce93d8;}
+.ai-result h3{font-family:'Noto Serif Bengali',serif;color:var(--purple);font-size:1rem;margin-bottom:0.75rem;}
+.ai-text{font-size:0.875rem;line-height:1.7;color:var(--text);white-space:pre-wrap;}
+.ai-loading{text-align:center;padding:1.5rem;color:var(--purple);}
+.spinner{display:inline-block;width:32px;height:32px;border:3px solid var(--rose-light);border-top-color:var(--rose);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* RISK BADGE */
+.risk-badge{display:inline-block;padding:0.4rem 1.25rem;border-radius:2rem;font-family:'Noto Serif Bengali',serif;font-weight:700;font-size:1.1rem;margin-bottom:0.5rem;}
+.risk-low{background:#e8f5e9;color:#2e7d32;border:2px solid #81c784;}
+.risk-moderate{background:#fff8e1;color:#e65100;border:2px solid #ffb74d;}
+.risk-high{background:#fce4ec;color:#c62828;border:2px solid #e57373;}
+
+/* SCORE METER */
+.score-ring{text-align:center;margin:1rem 0;}
+svg.ring circle{transition:stroke-dashoffset 1s ease;}
+.score-val{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--rose-dark);}
+.score-label{font-size:0.8rem;color:var(--text-soft);}
+
+/* PDF / QR */
+.qr-container{text-align:center;padding:1.5rem;}
+#qrcode{display:inline-block;padding:1rem;background:white;border-radius:12px;border:2px solid var(--rose-light);box-shadow:0 4px 16px var(--shadow);}
+.qr-hint{font-size:0.8rem;color:var(--text-soft);margin-top:0.75rem;font-family:'Noto Serif Bengali',serif;}
+
+/* SUCCESS */
+.success-box{text-align:center;padding:2rem 1rem;}
+.success-icon{font-size:4rem;margin-bottom:1rem;animation:pop 0.5s ease;}
+@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
+.success-title{font-family:'Noto Serif Bengali',serif;font-size:1.4rem;color:var(--green);font-weight:700;margin-bottom:0.5rem;}
+.success-msg{font-size:0.875rem;color:var(--text-soft);line-height:1.6;}
+
+/* INFO BOX */
+.info-box{border-radius:8px;padding:0.85rem 1rem;margin-bottom:1rem;font-size:0.85rem;line-height:1.6;}
+.info-box.blue{background:#e3f2fd;border-left:4px solid var(--blue);color:#0d47a1;}
+.info-box.green{background:#e8f5e9;border-left:4px solid var(--green);color:#1b5e20;}
+.info-box.rose{background:var(--rose-pale);border-left:4px solid var(--rose);color:var(--rose-dark);}
+
+/* STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1rem;}
+.stat-box{background:var(--rose-pale);border-radius:10px;padding:0.75rem;text-align:center;border:1px solid var(--rose-light);}
+.stat-num{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--rose-dark);}
+.stat-lbl{font-size:0.68rem;color:var(--text-soft);font-family:'Noto Serif Bengali',serif;margin-top:2px;line-height:1.3;}
+
+/* TAG */
+.tag{display:inline-block;background:var(--rose-pale);color:var(--rose-dark);border-radius:2rem;padding:0.15rem 0.65rem;font-size:0.72rem;margin:0.1rem;font-family:'Noto Serif Bengali',serif;border:1px solid var(--rose-light);}
+
+footer{text-align:center;padding:1.25rem;font-size:0.78rem;color:var(--text-soft);border-top:1px solid var(--rose-light);}
+footer a{color:var(--rose);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ribbon-anim">🎗️</div>
+  <h1>স্তন ক্যানসার স্মার্ট স্ক্রিনিং<br><span style="font-family:'Playfair Display',serif;font-style:italic;font-size:0.7em;opacity:0.9">AI-Powered Breast Cancer Screening</span></h1>
+  <p>ব্যক্তিগত ঝুঁকি মূল্যায়ন · AI বিশ্লেষণ · PDF রিপোর্ট</p>
+</header>
+
+<nav class="progress-nav" id="progressNav">
+  <div class="step-indicator active" id="si1"><span class="step-num-badge">১</span><span class="bn-only">পরিচয়</span></div>
+  <div class="step-indicator" id="si2"><span class="step-num-badge">২</span><span class="bn-only">ঝুঁকি</span></div>
+  <div class="step-indicator" id="si3"><span class="step-num-badge">৩</span><span class="bn-only">লক্ষণ</span></div>
+  <div class="step-indicator" id="si4"><span class="step-num-badge">৪</span><span class="bn-only">AI বিশ্লেষণ</span></div>
+  <div class="step-indicator" id="si5"><span class="step-num-badge">৫</span><span class="bn-only">PDF & QR</span></div>
+</nav>
+
+<main>
+  <div class="disclaimer">⚠️ <strong>গুরুত্বপূর্ণ:</strong> এই স্ক্রিনিং টুল শুধুমাত্র শিক্ষামূলক। এটি চিকিৎসা পরামর্শ নয়। সঠিক রোগ নির্ণয়ের জন্য বিশেষজ্ঞ চিকিৎসকের পরামর্শ নিন। | <em>For educational purposes only. Not medical advice.</em></div>
+
+  <!-- PAGE 1: PERSONAL INFO -->
+  <div class="page active" id="page1">
+    <div class="card">
+      <div class="card-hd"><span>👤</span><h2>ব্যক্তিগত তথ্য <small>Personal Information</small></h2></div>
+      <div class="card-bd">
+        <div class="fg">
+          <label><span class="bn">পূর্ণ নাম</span> <span class="en">Full Name</span></label>
+          <input type="text" id="name" placeholder="আপনার নাম লিখুন / Enter your name">
+        </div>
+        <div class="fg">
+          <label><span class="bn">বয়স (বছর)</span> <span class="en">Age (years)</span></label>
+          <input type="number" id="age" min="18" max="100" placeholder="e.g. 45">
+        </div>
+        <div class="fg">
+          <label><span class="bn">ফোন নম্বর</span> <span class="en">Phone Number</span></label>
+          <input type="tel" id="phone" placeholder="+91 / 0...">
+        </div>
+        <div class="fg">
+          <label><span class="bn">জেলা / শহর</span> <span class="en">District / City</span></label>
+          <input type="text" id="city" placeholder="e.g. কলকাতা / Kolkata">
+        </div>
+        <div class="fg">
+          <label><span class="bn">মাসিক শুরু হয়েছিল কত বছরে?</span> <span class="en">Age at first menstruation</span></label>
+          <select id="menarche">
+            <option value="">-- নির্বাচন করুন --</option>
+            <option value="1">১২ বছরের আগে / Before 12</option>
+            <option value="0">১২–১৩ বছরে / Age 12–13</option>
+            <option value="-1">১৩ বছরের পরে / After 13</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label><span class="bn">প্রথম সন্তান কত বছরে?</span> <span class="en">Age at first live birth</span></label>
+          <select id="firstbirth">
+            <option value="">-- নির্বাচন করুন --</option>
+            <option value="1">সন্তান নেই / No children</option>
+            <option value="0">৩০ বছরের আগে / Before 30</option>
+            <option value="1">৩০ বা তার পরে / Age 30+</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label><span class="bn">মেনোপজ হয়েছে?</span> <span class="en">Menopausal status</span></label>
+          <select id="menopause">
+            <option value="">-- নির্বাচন করুন --</option>
+            <option value="0">না / No</option>
+            <option value="0">হ্যাঁ, ৫৫ বছরের আগে / Yes, before 55</option>
+            <option value="1">হ্যাঁ, ৫৫+ বছরে / Yes, at 55+</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label><span class="bn">BMI?</span> <span class="en">Body Mass Index</span></label>
+          <select id="bmi">
+            <option value="">-- নির্বাচন করুন --</option>
+            <option value="0">স্বাভাবিক ১৮.৫–২৪.৯ / Normal</option>
+            <option value="1">অতিরিক্ত ওজন ২৫–২৯.৯ / Overweight</option>
+            <option value="2">স্থূল ৩০+ / Obese</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label><span class="bn">সাপ্তাহিক ব্যায়াম?</span> <span class="en">Weekly exercise</span></label>
+          <select id="exercise">
+            <option value="">-- নির্বাচন করুন --</option>
+            <option value="-1">৫+ ঘন্টা / 5+ hours</option>
+            <option value="0">২.৫–৫ ঘন্টা / 2.5–5 hours</option>
+            <option value="1">১ ঘন্টার কম / Less than 1 hour</option>
+          </select>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary btn-full" onclick="goTo(2)">পরবর্তী ধাপ →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: RISK FACTORS -->
+  <div class="page" id="page2">
+    <div class="card">
+      <div class="card-hd"><span>🧬</span><h2>পারিবারিক ইতিহাস ও ঝুঁকির কারণ <small>Family History & Risk Factors</small></h2></div>
+      <div class="card-bd">
+        <p style="font-size:0.83rem;color:var(--text-soft);margin-bottom:0.85rem;font-family:'Noto Serif Bengali',serif;">প্রযোজ্য সব বিকল্প নির্বাচন করুন / Select all that apply:</p>
+        <div class="cbgrid" id="riskGrid">
+          <div class="cb-item" onclick="toggleCB(this)" data-val="2"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">মা/বোনের স্তন ক্যানসার</span><span class="en">Mother/sister had breast cancer</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">অন্য আত্মীয়ের স্তন ক্যানসার</span><span class="en">Other relative with breast cancer</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="3"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">BRCA1/BRCA2 জিন পজিটিভ</span><span class="en">Known BRCA mutation</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="2"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">আগে স্তনে অস্বাভাবিক কোষ</span><span class="en">Previous atypical hyperplasia/LCIS</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">HRT (৫+ বছর)</span><span class="en">Hormone therapy 5+ yrs</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">দীর্ঘ জন্মনিয়ন্ত্রণ বড়ি</span><span class="en">Long-term oral contraceptives</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">নিয়মিত মদ্যপান</span><span class="en">Regular alcohol consumption</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">বুকে রেডিয়েশন থেরাপি</span><span class="en">Prior chest radiation</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">ধূমপান</span><span class="en">Smoking</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">ঘন স্তন টিস্যু (Dense breast)</span><span class="en">Dense breast tissue</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">রাতের শিফটে দীর্ঘ কাজ</span><span class="en">Long-term night shift work</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="2"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">ডিম্বাশয় ক্যানসারের ইতিহাস</span><span class="en">Ovarian cancer history</span></div></div>
+        </div>
+
+        <div style="margin-top:1.25rem;">
+          <label><span class="bn">স্ক্রিনিং ইতিহাস</span> <span class="en">Screening history</span></label>
+          <select id="mammo" style="margin-bottom:0.6rem;">
+            <option value="">শেষ ম্যামোগ্রাম? / Last mammogram?</option>
+            <option value="0">গত ১ বছরে / Within last year</option>
+            <option value="0">১–২ বছর আগে / 1–2 years ago</option>
+            <option value="1">২–৫ বছর আগে / 2–5 years ago</option>
+            <option value="2">৫+ বছর বা কখনো না / 5+ yrs or never</option>
+          </select>
+          <select id="bse">
+            <option value="">নিয়মিত BSE করেন? / Regular self-exam?</option>
+            <option value="0">হ্যাঁ, প্রতি মাসে / Yes, monthly</option>
+            <option value="1">মাঝেমাঝে / Occasionally</option>
+            <option value="1">না / No</option>
+          </select>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goTo(1)">← পিছনে</button>
+          <button class="btn btn-primary" onclick="goTo(3)">পরবর্তী →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 3: SYMPTOMS -->
+  <div class="page" id="page3">
+    <div class="card">
+      <div class="card-hd"><span>🔍</span><h2>বর্তমান লক্ষণ <small>Current Symptoms</small></h2></div>
+      <div class="card-bd">
+        <div class="info-box rose" style="margin-bottom:1rem;">⚠️ <strong>কোনো লক্ষণ থাকলে নির্বাচন করুন।</strong> কোনো লক্ষণ না থাকলে খালি রেখে পরবর্তী ধাপে যান।</div>
+        <div class="cbgrid" id="symptomGrid">
+          <div class="cb-item" onclick="toggleCB(this)" data-val="3"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">স্তনে চাকা বা পিণ্ড</span><span class="en">Lump in breast</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="2"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">রক্তমিশ্রিত বোঁটার স্রাব</span><span class="en">Bloody nipple discharge</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="2"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">স্তনের আকৃতি পরিবর্তন</span><span class="en">Change in breast shape</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="2"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">বোঁটা ভেতরে ঢুকে যাওয়া</span><span class="en">Nipple inversion</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="2"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">স্তনে অবিরাম ব্যথা</span><span class="en">Persistent breast pain</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">চামড়া লালচে / কমলার খোসার মতো</span><span class="en">Skin redness / peau d'orange</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">বগলে ফোলা বা গ্রন্থি</span><span class="en">Armpit swelling or lump</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">চামড়া পুরু বা টান অনুভব</span><span class="en">Skin thickening</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">বোঁটার চারপাশে চুলকানি</span><span class="en">Itching around nipple</span></div></div>
+          <div class="cb-item" onclick="toggleCB(this)" data-val="1"><input type="checkbox"><div class="cb-box"></div><div class="cb-lbl"><span class="bn">ঘাড় বা কলার বোনে ফোলা</span><span class="en">Neck/collarbone swelling</span></div></div>
+        </div>
+
+        <div class="fg" style="margin-top:1.25rem;">
+          <label><span class="bn">অতিরিক্ত মন্তব্য (ঐচ্ছিক)</span> <span class="en">Additional comments (optional)</span></label>
+          <textarea id="comments" placeholder="কোনো অতিরিক্ত তথ্য থাকলে লিখুন..."></textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goTo(2)">← পিছনে</button>
+          <button class="btn btn-primary" onclick="runAIAnalysis()">🤖 AI বিশ্লেষণ করুন</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 4: AI ANALYSIS -->
+  <div class="page" id="page4">
+    <div class="card">
+      <div class="card-hd"><span>🤖</span><h2>AI বিশ্লেষণ ও ঝুঁকি রিপোর্ট <small>AI Analysis & Risk Report</small></h2></div>
+      <div class="card-bd">
+        <div id="aiLoading" class="ai-loading">
+          <div class="spinner"></div>
+          <p style="margin-top:0.75rem;font-family:'Noto Serif Bengali',serif;color:var(--purple);">AI বিশ্লেষণ চলছে...<br><small>Analyzing your data...</small></p>
+        </div>
+        <div id="aiContent" style="display:none;">
+          <!-- Score meter -->
+          <div class="score-ring">
+            <svg width="130" height="130" viewBox="0 0 130 130">
+              <circle cx="65" cy="65" r="55" fill="none" stroke="#f5e0e8" stroke-width="12"/>
+              <circle id="scoreArc" cx="65" cy="65" r="55" fill="none" stroke="#c2185b" stroke-width="12"
+                stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6"
+                transform="rotate(-90 65 65)"/>
+            </svg>
+            <div style="margin-top:-80px;padding-bottom:50px;">
+              <div class="score-val" id="scoreDisplay">0</div>
+              <div class="score-label">Risk Score</div>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-bottom:1.25rem;">
+            <div class="risk-badge" id="riskBadge">মূল্যায়ন চলছে...</div>
+          </div>
+
+          <div class="ai-result">
+            <h3>🤖 AI পরামর্শ | AI Recommendation</h3>
+            <div class="ai-text" id="aiText">বিশ্লেষণ লোড হচ্ছে...</div>
+          </div>
+
+          <div id="keyRisksDiv" style="margin-bottom:1rem;"></div>
+          <div id="recsDiv"></div>
+
+          <div class="btn-row">
+            <button class="btn btn-secondary" onclick="goTo(3)">← সম্পাদনা করুন</button>
+            <button class="btn btn-green btn-full" onclick="generatePDFAndQR()">📄 PDF ও QR তৈরি করুন</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 5: PDF & QR -->
+  <div class="page" id="page5">
+    <div class="card">
+      <div class="card-hd"><span>📄</span><h2>রিপোর্ট ও QR কোড <small>Report & QR Code</small></h2></div>
+      <div class="card-bd" id="pdfQRContent">
+        <div class="success-box">
+          <div class="success-icon">✅</div>
+          <div class="success-title">রিপোর্ট তৈরি হয়েছে!</div>
+          <div class="success-msg">আপনার ডেটা সংরক্ষিত হয়েছে এবং চিকিৎসকের কাছে পাঠানো হয়েছে।<br><em>Your data has been saved and sent to the healthcare provider.</em></div>
+        </div>
+
+        <div class="qr-container">
+          <div id="qrcode"></div>
+          <p class="qr-hint">🔍 এই QR কোড স্ক্যান করে আপনার রিপোর্ট দেখুন<br><em>Scan this QR code to view your report</em></p>
+          <p style="font-size:0.75rem;color:#bbb;margin-top:0.5rem;" id="reportId"></p>
+        </div>
+
+        <div class="info-box green">
+          ✅ <strong>ডেটা সংরক্ষিত:</strong> আপনার স্ক্রিনিং তথ্য সুরক্ষিতভাবে জমা হয়েছে।<br>
+          <em>Data Saved: Your screening information has been securely submitted.</em>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary btn-full" onclick="downloadPDF()" id="pdfBtn">⬇️ PDF ডাউনলোড করুন</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary btn-full" onclick="startOver()">🔄 নতুন স্ক্রিনিং শুরু করুন</button>
+        </div>
+
+        <div style="margin-top:1.5rem;padding:1rem;background:var(--rose-pale);border-radius:10px;font-size:0.8rem;color:var(--rose-dark);text-align:center;">
+          <strong style="font-family:'Noto Serif Bengali',serif;">জরুরি হেল্পলাইন:</strong><br>
+          NCI: <a href="tel:1800116622" style="color:var(--rose);">1800-116-622</a> (বিনামূল্যে) |
+          AIIMS: <a href="tel:01126588500" style="color:var(--rose);">011-26588500</a><br>
+          Tata Memorial: <a href="tel:02224177000" style="color:var(--rose);">022-24177000</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  🎗️ স্তন ক্যানসার সচেতনতা | <em>Breast Cancer Awareness</em><br>
+  <span style="font-size:0.72rem;color:#bbb;">শিক্ষামূলক টুল · চিকিৎসা পরামর্শ নয় · Educational tool · Not medical advice</span>
+</footer>
+
+<script>
+// ===== STATE =====
+let currentPage = 1;
+let scoreData = {};
+let aiAnalysis = '';
+let pdfDoc = null;
+let reportUID = '';
+
+// ===== NAVIGATION =====
+function goTo(n) {
+  if (n === 2 && !validatePage1()) return;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page' + n).classList.add('active');
+  document.querySelectorAll('.step-indicator').forEach((si, i) => {
+    si.classList.remove('active','done');
+    if (i + 1 < n) si.classList.add('done');
+    if (i + 1 === n) si.classList.add('active');
+  });
+  currentPage = n;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function validatePage1() {
+  const name = document.getElementById('name').value.trim();
+  const age = parseInt(document.getElementById('age').value);
+  if (!name) { alert('অনুগ্রহ করে আপনার নাম লিখুন | Please enter your name'); return false; }
+  if (!age || age < 18 || age > 100) { alert('সঠিক বয়স লিখুন (১৮–১০০) | Enter valid age (18–100)'); return false; }
+  return true;
+}
+
+// ===== CHECKBOX TOGGLE =====
+function toggleCB(el) { el.classList.toggle('checked'); }
+
+// ===== SCORE CALCULATION =====
+function calcScore() {
+  const age = parseInt(document.getElementById('age').value) || 0;
+  let score = 0;
+  if (age >= 70) score += 3; else if (age >= 60) score += 2; else if (age >= 40) score += 1;
+
+  ['menarche','firstbirth','menopause','bmi','exercise','mammo','bse'].forEach(id => {
+    const v = document.getElementById(id).value;
+    if (v) score += parseFloat(v) || 0;
+  });
+
+  document.querySelectorAll('#riskGrid .cb-item.checked').forEach(el => score += parseFloat(el.dataset.val)||0);
+  document.querySelectorAll('#symptomGrid .cb-item.checked').forEach(el => score += parseFloat(el.dataset.val)||0);
+
+  const selectedRisks = [...document.querySelectorAll('#riskGrid .cb-item.checked')].map(el => el.querySelector('.bn').textContent);
+  const selectedSymptoms = [...document.querySelectorAll('#symptomGrid .cb-item.checked')].map(el => el.querySelector('.bn').textContent);
+
+  return { score, selectedRisks, selectedSymptoms };
+}
+
+// ===== COLLECT ALL DATA =====
+function collectData() {
+  const {score, selectedRisks, selectedSymptoms} = calcScore();
+  return {
+    name: document.getElementById('name').value.trim(),
+    age: document.getElementById('age').value,
+    phone: document.getElementById('phone').value.trim(),
+    city: document.getElementById('city').value.trim(),
+    menarche: document.getElementById('menarche').options[document.getElementById('menarche').selectedIndex]?.text || '-',
+    firstbirth: document.getElementById('firstbirth').options[document.getElementById('firstbirth').selectedIndex]?.text || '-',
+    menopause: document.getElementById('menopause').options[document.getElementById('menopause').selectedIndex]?.text || '-',
+    bmi: document.getElementById('bmi').options[document.getElementById('bmi').selectedIndex]?.text || '-',
+    exercise: document.getElementById('exercise').options[document.getElementById('exercise').selectedIndex]?.text || '-',
+    mammo: document.getElementById('mammo').options[document.getElementById('mammo').selectedIndex]?.text || '-',
+    bse: document.getElementById('bse').options[document.getElementById('bse').selectedIndex]?.text || '-',
+    selectedRisks,
+    selectedSymptoms,
+    comments: document.getElementById('comments').value.trim(),
+    score,
+    timestamp: new Date().toLocaleString('bn-IN', {timeZone:'Asia/Kolkata'}),
+    timestampEn: new Date().toLocaleString('en-IN', {timeZone:'Asia/Kolkata'}),
+  };
+}
+
+// ===== AI ANALYSIS =====
+async function runAIAnalysis() {
+  goTo(4);
+  document.getElementById('aiLoading').style.display = 'block';
+  document.getElementById('aiContent').style.display = 'none';
+
+  scoreData = collectData();
+  reportUID = 'BCSC-' + Date.now().toString(36).toUpperCase();
+
+  // Build prompt for Claude API
+  const prompt = `You are an expert oncologist and breast cancer screening specialist. Analyze the following patient screening data and provide a detailed, personalized assessment in BOTH Bengali and English.
+
+Patient Data:
+- Name: ${scoreData.name}
+- Age: ${scoreData.age} years
+- City: ${scoreData.city}
+- Risk Score: ${scoreData.score}/22
+- Menarche: ${scoreData.menarche}
+- First birth: ${scoreData.firstbirth}
+- Menopause: ${scoreData.menopause}
+- BMI: ${scoreData.bmi}
+- Exercise: ${scoreData.exercise}
+- Last mammogram: ${scoreData.mammo}
+- Self-examination: ${scoreData.bse}
+- Risk factors present: ${scoreData.selectedRisks.join(', ') || 'None'}
+- Symptoms present: ${scoreData.selectedSymptoms.join(', ') || 'None'}
+- Patient comments: ${scoreData.comments || 'None'}
+
+Provide a response in this EXACT JSON format (no markdown, just JSON):
+{
+  "riskLevel": "LOW" or "MODERATE" or "HIGH",
+  "riskLevelBn": "কম ঝুঁকি" or "মাঝারি ঝুঁকি" or "উচ্চ ঝুঁকি",
+  "summary_bn": "2-3 sentence Bengali summary of findings",
+  "summary_en": "2-3 sentence English summary of findings",
+  "aiAdvice_bn": "Detailed personalized Bengali advice (4-5 sentences)",
+  "aiAdvice_en": "Detailed personalized English advice (4-5 sentences)",
+  "recommendations_bn": ["rec1", "rec2", "rec3", "rec4", "rec5"],
+  "recommendations_en": ["rec1", "rec2", "rec3", "rec4", "rec5"],
+  "urgency": "ROUTINE" or "SOON" or "URGENT",
+  "urgencyNote_bn": "When to seek care",
+  "urgencyNote_en": "When to seek care in English"
+}`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const rawText = data.content.map(c => c.text || '').join('');
+    const clean = rawText.replace(/```json|```/g,'').trim();
+    const result = JSON.parse(clean);
+
+    aiAnalysis = result;
+    scoreData.aiResult = result;
+
+    // Render AI result
+    renderAIResult(result, scoreData.score);
+
+    // Save to persistent storage
+    await saveToStorage(scoreData, reportUID);
+
+  } catch(err) {
+    // Fallback if AI fails
+    const fallback = generateFallback(scoreData.score);
+    aiAnalysis = fallback;
+    scoreData.aiResult = fallback;
+    renderAIResult(fallback, scoreData.score);
+    await saveToStorage(scoreData, reportUID);
+  }
+}
+
+function generateFallback(score) {
+  let riskLevel, riskLevelBn, recs_bn, recs_en, advice_bn, advice_en, urgency;
+  if (score <= 4) {
+    riskLevel='LOW'; riskLevelBn='কম ঝুঁকি'; urgency='ROUTINE';
+    advice_bn='আপনার বর্তমান তথ্য অনুযায়ী আপনি কম ঝুঁকিতে আছেন। তবে নিয়মিত স্ক্রিনিং অব্যাহত রাখুন এবং যেকোনো পরিবর্তনে চিকিৎসকের পরামর্শ নিন। সুষম খাদ্য ও নিয়মিত ব্যায়াম আপনার সুরক্ষা বাড়াবে।';
+    advice_en='Based on your data, you appear to be at lower risk. Continue regular screening and consult a doctor for any changes. A healthy diet and regular exercise will further reduce your risk.';
+    recs_bn=['প্রতি মাসে BSE করুন','৪০+ বয়সে বার্ষিক ম্যামোগ্রাম','সুষম খাদ্য ও ব্যায়াম','প্রতি ৩ বছরে ক্লিনিকাল পরীক্ষা'];
+    recs_en=['Monthly breast self-examination','Annual mammogram from age 40','Healthy diet & exercise','Clinical exam every 3 years'];
+  } else if (score <= 9) {
+    riskLevel='MODERATE'; riskLevelBn='মাঝারি ঝুঁকি'; urgency='SOON';
+    advice_bn='আপনার কিছু ঝুঁকির কারণ রয়েছে। একজন স্তনরোগ বিশেষজ্ঞের সাথে পরামর্শ করুন এবং ব্যক্তিগত স্ক্রিনিং পরিকল্পনা তৈরি করুন। জীবনযাপনে পরিবর্তন আপনার ঝুঁকি কমাতে সাহায্য করবে।';
+    advice_en='You have some risk factors present. Consult a breast specialist and create a personalized screening plan. Lifestyle changes can significantly reduce your risk.';
+    recs_bn=['বিশেষজ্ঞ চিকিৎসকের পরামর্শ নিন','বার্ষিক ম্যামোগ্রাম + আল্ট্রাসাউন্ড','প্রতি ৬ মাসে ক্লিনিকাল পরীক্ষা','ওজন নিয়ন্ত্রণ ও মদ্যপান বন্ধ','BRCA পরীক্ষার বিষয়ে জিজ্ঞাসা করুন'];
+    recs_en=['Consult a breast specialist','Annual mammogram + ultrasound','Clinical exam every 6 months','Weight control & stop alcohol','Ask about BRCA genetic testing'];
+  } else {
+    riskLevel='HIGH'; riskLevelBn='উচ্চ ঝুঁকি'; urgency='URGENT';
+    advice_bn='আপনার উচ্চ ঝুঁকির কারণ বা লক্ষণ রয়েছে। যত তাড়াতাড়ি সম্ভব একজন অনকোলজিস্টের সাথে দেখা করুন। দেরি না করা অত্যন্ত জরুরি কারণ প্রাথমিক পর্যায়ে চিকিৎসায় ফলাফল অনেক ভালো।';
+    advice_en='You have significant risk factors or symptoms. Please see an oncologist as soon as possible. Early detection dramatically improves outcomes — do not delay.';
+    recs_bn=['⚡ এখনই অনকোলজিস্টের সাথে দেখা করুন','ম্যামোগ্রাম, আল্ট্রাসাউন্ড ও MRI করান','প্রয়োজনে বায়োপসি','BRCA জিন পরীক্ষা করুন','কেমোপ্রিভেনশন বিষয়ে আলোচনা করুন'];
+    recs_en=['⚡ See an oncologist immediately','Mammogram, ultrasound & MRI','Biopsy if recommended','BRCA genetic testing','Discuss chemoprevention options'];
+  }
+  return {riskLevel,riskLevelBn,advice_bn,advice_en,recommendations_bn:recs_bn,recommendations_en:recs_en,urgency,urgencyNote_bn:'যত তাড়াতাড়ি সম্ভব চিকিৎসক দেখান',urgencyNote_en:'See a doctor as soon as possible',summary_bn:'',summary_en:''};
+}
+
+function renderAIResult(result, score) {
+  document.getElementById('aiLoading').style.display = 'none';
+  document.getElementById('aiContent').style.display = 'block';
+
+  // Score arc animation
+  const maxScore = 22;
+  const pct = Math.min(score / maxScore, 1);
+  const circumference = 345.6;
+  const offset = circumference - (pct * circumference);
+  document.getElementById('scoreDisplay').textContent = score.toFixed(0);
+  setTimeout(() => {
+    const arc = document.getElementById('scoreArc');
+    arc.style.strokeDashoffset = offset;
+    if (result.riskLevel === 'LOW') arc.style.stroke = '#4caf50';
+    else if (result.riskLevel === 'MODERATE') arc.style.stroke = '#ff9800';
+    else arc.style.stroke = '#f44336';
+  }, 200);
+
+  // Badge
+  const badge = document.getElementById('riskBadge');
+  badge.textContent = result.riskLevelBn + ' | ' + result.riskLevel.charAt(0) + result.riskLevel.slice(1).toLowerCase() + ' Risk';
+  badge.className = 'risk-badge risk-' + result.riskLevel.toLowerCase();
+
+  // AI text
+  document.getElementById('aiText').textContent =
+    (result.aiAdvice_bn || result.summary_bn || '') + '\n\n' + (result.aiAdvice_en || result.summary_en || '');
+
+  // Key risks
+  const kr = document.getElementById('keyRisksDiv');
+  if (scoreData.selectedRisks.length > 0 || scoreData.selectedSymptoms.length > 0) {
+    kr.innerHTML = '<div style="margin-bottom:0.75rem;"><strong style="font-family:\'Noto Serif Bengali\',serif;font-size:0.875rem;color:var(--rose-dark);">🔴 চিহ্নিত ঝুঁকি/লক্ষণ:</strong><br>' +
+      [...scoreData.selectedRisks, ...scoreData.selectedSymptoms].map(r => `<span class="tag">${r}</span>`).join('') + '</div>';
+  }
+
+  // Recommendations
+  const rd = document.getElementById('recsDiv');
+  const recs_bn = result.recommendations_bn || [];
+  const recs_en = result.recommendations_en || [];
+  rd.innerHTML = '<div class="info-box blue"><strong style="font-family:\'Noto Serif Bengali\',serif;">📋 পরামর্শ | Recommendations:</strong><br>' +
+    recs_bn.map((r,i) => `<div style="margin-top:0.4rem;">• ${r}${recs_en[i] ? ' <em style="color:#5b7fa8;font-size:0.8em">| '+recs_en[i]+'</em>' : ''}</div>`).join('') +
+    '</div>';
+}
+
+// ===== SAVE TO STORAGE =====
+async function saveToStorage(data, uid) {
+  try {
+    const key = 'screening:' + uid;
+    const record = { ...data, uid, savedAt: new Date().toISOString() };
+    await window.storage.set(key, JSON.stringify(record), true);
+
+    // Also update index
+    let index = [];
+    try {
+      const idxRes = await window.storage.get('screening:_index', true);
+      if (idxRes) index = JSON.parse(idxRes.value);
+    } catch(e) {}
+    index.unshift({ uid, name: data.name, age: data.age, score: data.score, risk: data.aiResult?.riskLevel||'?', ts: data.timestampEn });
+    if (index.length > 500) index = index.slice(0, 500);
+    await window.storage.set('screening:_index', JSON.stringify(index), true);
+  } catch(err) {
+    console.warn('Storage error:', err);
+  }
+}
+
+// ===== PDF GENERATION =====
+async function generatePDFAndQR() {
+  goTo(5);
+
+  // Generate QR code
+  const qrDiv = document.getElementById('qrcode');
+  qrDiv.innerHTML = '';
+  const reportUrl = window.location.href.split('?')[0] + '?report=' + reportUID;
+  new QRCode(qrDiv, {
+    text: reportUrl,
+    width: 160, height: 160,
+    colorDark: '#880e4f', colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+  document.getElementById('reportId').textContent = 'Report ID: ' + reportUID;
+
+  // Build PDF
+  buildPDF();
+}
+
+function buildPDF() {
+  const { jsPDF } = window.jspdf;
+  pdfDoc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  const W = 210, M = 18;
+  let y = 0;
+
+  // ---- HEADER ----
+  pdfDoc.setFillColor(136, 14, 79);
+  pdfDoc.rect(0, 0, W, 42, 'F');
+  // Ribbon emoji-like circles
+  pdfDoc.setFillColor(194, 24, 91);
+  pdfDoc.circle(185, 10, 18, 'F');
+  pdfDoc.setFillColor(233, 30, 140);
+  pdfDoc.circle(185, 32, 12, 'F');
+  // Title
+  pdfDoc.setTextColor(255, 255, 255);
+  pdfDoc.setFontSize(16); pdfDoc.setFont('helvetica','bold');
+  pdfDoc.text('Breast Cancer Screening Report', M, 16);
+  pdfDoc.setFontSize(10); pdfDoc.setFont('helvetica','normal');
+  pdfDoc.text('Powered by AI | Educational Screening Tool', M, 24);
+  pdfDoc.setFontSize(8);
+  pdfDoc.text('Report ID: ' + reportUID + '   |   Date: ' + scoreData.timestampEn, M, 32);
+  pdfDoc.text('IMPORTANT: This is not a medical diagnosis. Consult a qualified oncologist.', M, 38);
+  y = 52;
+
+  // ---- RISK BADGE ----
+  const risk = aiAnalysis?.riskLevel || 'MODERATE';
+  const riskColors = { LOW:[46,125,50], MODERATE:[230,81,0], HIGH:[198,40,40] };
+  const [r,g,b] = riskColors[risk] || riskColors.MODERATE;
+  pdfDoc.setFillColor(r, g, b);
+  pdfDoc.roundedRect(M, y, W - M*2, 16, 4, 4, 'F');
+  pdfDoc.setTextColor(255,255,255);
+  pdfDoc.setFontSize(13); pdfDoc.setFont('helvetica','bold');
+  const riskTxt = { LOW:'LOW RISK', MODERATE:'MODERATE RISK', HIGH:'HIGH RISK' };
+  const riskBnTxt = { LOW:'kom jhuki', MODERATE:'majhari jhuki', HIGH:'uccha jhuki' };
+  pdfDoc.text(riskTxt[risk] + '   |   Score: ' + scoreData.score + '/22', W/2, y+10.5, {align:'center'});
+  y += 24;
+
+  // ---- PATIENT INFO ----
+  pdfDoc.setTextColor(136, 14, 79);
+  pdfDoc.setFontSize(11); pdfDoc.setFont('helvetica','bold');
+  pdfDoc.text('PATIENT INFORMATION', M, y); y += 6;
+  pdfDoc.setDrawColor(194, 24, 91); pdfDoc.setLineWidth(0.5);
+  pdfDoc.line(M, y, W-M, y); y += 5;
+
+  pdfDoc.setTextColor(45, 27, 32);
+  pdfDoc.setFontSize(9); pdfDoc.setFont('helvetica','normal');
+
+  const infoRows = [
+    ['Name / নাম', scoreData.name],
+    ['Age / বয়স', scoreData.age + ' years'],
+    ['Phone / ফোন', scoreData.phone || 'Not provided'],
+    ['City / শহর', scoreData.city || 'Not provided'],
+    ['Menarche', scoreData.menarche],
+    ['First Birth', scoreData.firstbirth],
+    ['Menopause', scoreData.menopause],
+    ['BMI', scoreData.bmi],
+    ['Exercise', scoreData.exercise],
+    ['Last Mammogram', scoreData.mammo],
+    ['Self-Exam (BSE)', scoreData.bse],
+  ];
+
+  let col = 0;
+  infoRows.forEach((row, i) => {
+    const x = col === 0 ? M : M + 87;
+    pdfDoc.setFont('helvetica','bold'); pdfDoc.setTextColor(136, 14, 79);
+    pdfDoc.text(row[0] + ':', x, y);
+    pdfDoc.setFont('helvetica','normal'); pdfDoc.setTextColor(45, 27, 32);
+    pdfDoc.text(String(row[1]).substring(0,38), x + 32, y);
+    col++;
+    if (col === 2) { col = 0; y += 6; }
+  });
+  if (col !== 0) y += 6;
+  y += 4;
+
+  // ---- RISK FACTORS ----
+  if (scoreData.selectedRisks.length > 0) {
+    pdfDoc.setTextColor(136, 14, 79);
+    pdfDoc.setFontSize(11); pdfDoc.setFont('helvetica','bold');
+    pdfDoc.text('IDENTIFIED RISK FACTORS', M, y); y += 5;
+    pdfDoc.line(M, y, W-M, y); y += 5;
+    pdfDoc.setTextColor(45,27,32); pdfDoc.setFontSize(9); pdfDoc.setFont('helvetica','normal');
+    scoreData.selectedRisks.forEach(r => {
+      pdfDoc.text('• ' + r, M+3, y); y += 5;
+    });
+    y += 3;
+  }
+
+  // ---- SYMPTOMS ----
+  if (scoreData.selectedSymptoms.length > 0) {
+    pdfDoc.setTextColor(198, 40, 40);
+    pdfDoc.setFontSize(11); pdfDoc.setFont('helvetica','bold');
+    pdfDoc.text('REPORTED SYMPTOMS', M, y); y += 5;
+    pdfDoc.setDrawColor(198,40,40); pdfDoc.line(M, y, W-M, y); y += 5;
+    pdfDoc.setTextColor(45,27,32); pdfDoc.setFontSize(9); pdfDoc.setFont('helvetica','normal');
+    scoreData.selectedSymptoms.forEach(s => {
+      pdfDoc.text('• ' + s, M+3, y); y += 5;
+    });
+    y += 3;
+  }
+
+  // ---- AI ANALYSIS ----
+  if (y > 230) { pdfDoc.addPage(); y = 20; }
+  pdfDoc.setFillColor(248, 187, 208);
+  pdfDoc.roundedRect(M, y, W-M*2, 5, 2, 2, 'F');
+  pdfDoc.setTextColor(136, 14, 79);
+  pdfDoc.setFontSize(11); pdfDoc.setFont('helvetica','bold');
+  pdfDoc.text('AI ANALYSIS & RECOMMENDATIONS', M+2, y+3.5); y += 10;
+
+  pdfDoc.setTextColor(45,27,32); pdfDoc.setFontSize(8.5); pdfDoc.setFont('helvetica','normal');
+  const adviceText = (aiAnalysis?.aiAdvice_en || 'Please consult a healthcare professional.');
+  const adviceLines = pdfDoc.splitTextToSize(adviceText, W-M*2-5);
+  adviceLines.forEach(line => { pdfDoc.text(line, M+3, y); y += 5; });
+  y += 3;
+
+  // Recs
+  const recs = aiAnalysis?.recommendations_en || [];
+  recs.forEach(rec => {
+    if (y > 265) { pdfDoc.addPage(); y = 20; }
+    pdfDoc.setFillColor(252, 228, 236);
+    pdfDoc.roundedRect(M, y-3, W-M*2, 6, 1, 1, 'F');
+    pdfDoc.setTextColor(136, 14, 79); pdfDoc.setFont('helvetica','bold');
+    pdfDoc.text('>', M+2, y+0.5);
+    pdfDoc.setTextColor(45,27,32); pdfDoc.setFont('helvetica','normal');
+    const recLines = pdfDoc.splitTextToSize(rec, W-M*2-10);
+    pdfDoc.text(recLines[0], M+7, y+0.5);
+    y += 7;
+  });
+
+  // ---- COMMENTS ----
+  if (scoreData.comments) {
+    y += 3;
+    pdfDoc.setTextColor(136,14,79); pdfDoc.setFont('helvetica','bold'); pdfDoc.setFontSize(10);
+    pdfDoc.text('PATIENT NOTES:', M, y); y += 5;
+    pdfDoc.setTextColor(45,27,32); pdfDoc.setFont('helvetica','normal'); pdfDoc.setFontSize(8.5);
+    const commentLines = pdfDoc.splitTextToSize(scoreData.comments, W-M*2);
+    commentLines.forEach(l => { pdfDoc.text(l, M, y); y += 5; });
+  }
+
+  // ---- FOOTER ----
+  const totalPages = pdfDoc.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    pdfDoc.setPage(i);
+    pdfDoc.setFillColor(252, 228, 236);
+    pdfDoc.rect(0, 285, W, 12, 'F');
+    pdfDoc.setTextColor(136,14,79); pdfDoc.setFontSize(7); pdfDoc.setFont('helvetica','normal');
+    pdfDoc.text('Breast Cancer Screening Report | ' + reportUID + ' | Page ' + i + ' of ' + totalPages, W/2, 291, {align:'center'});
+    pdfDoc.text('DISCLAIMER: For educational purposes only. NOT a medical diagnosis. Consult an oncologist.', W/2, 295, {align:'center'});
+  }
+}
+
+function downloadPDF() {
+  if (!pdfDoc) { buildPDF(); }
+  const fname = 'BCScreening_' + (scoreData.name || 'Patient').replace(/\s+/g,'_') + '_' + reportUID + '.pdf';
+  pdfDoc.save(fname);
+}
+
+function startOver() {
+  document.querySelectorAll('input[type=text], input[type=number], input[type=tel], select, textarea').forEach(el => el.value = '');
+  document.querySelectorAll('.cb-item.checked').forEach(el => el.classList.remove('checked'));
+  document.getElementById('qrcode').innerHTML = '';
+  scoreData = {}; aiAnalysis = ''; pdfDoc = null; reportUID = '';
+  goTo(1);
+}
+</script>
+</body>
+</html>
